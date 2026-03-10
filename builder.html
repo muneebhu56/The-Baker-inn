@@ -365,9 +365,18 @@
         </div>
 
         <div class="preview-actions">
-          <button class="btn-order-cake" id="orderBtn" onclick="placeOrder()" disabled>Place Order via Phone</button>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:0.8rem;">
+            <input type="text" id="custName" placeholder="Your name *" style="padding:0.6rem 0.85rem;background:var(--bg3);border:1.5px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.83rem;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--caramel)'" onblur="this.style.borderColor='var(--border)'"/>
+            <input type="tel" id="custPhone" placeholder="Your phone number *" style="padding:0.6rem 0.85rem;background:var(--bg3);border:1.5px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.83rem;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--caramel)'" onblur="this.style.borderColor='var(--border)'"/>
+          </div>
+          <button class="btn-order-cake" id="orderBtn" onclick="placeOrder()" disabled>
+            <span style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Order via WhatsApp
+            </span>
+          </button>
           <div style="font-size:0.7rem;color:var(--text3);text-align:center;line-height:1.5;">
-            We'll call you at <a href="tel:0418541838" style="color:var(--caramel);text-decoration:none;">(041) 8541838</a> to confirm
+            Opens WhatsApp with your full order details pre-filled
           </div>
         </div>
       </div>
@@ -379,9 +388,15 @@
 <div class="modal-overlay" id="successModal">
   <div class="modal-card">
     <span class="modal-icon">🎂</span>
-    <h2>Order Submitted!</h2>
-    <p>Your custom cake order has been sent. Our team will call you at <strong style="color:var(--gold)">(041) 8541838</strong> within 2 hours to confirm the details and arrange collection or delivery.</p>
-    <a href="index.html" class="btn btn-fill" style="width:100%;justify-content:center;display:flex;">← Back to Home</a>
+    <h2>Opening WhatsApp!</h2>
+    <p>Your order details are pre-filled and ready to send. Just tap <strong style="color:var(--gold)">Send</strong> in WhatsApp and our team will confirm your order shortly.</p>
+    <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.5rem;">
+      <a id="waLink" href="#" target="_blank" class="btn btn-fill" style="width:100%;justify-content:center;display:flex;gap:0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Open WhatsApp
+      </a>
+      <a href="index.html" class="btn btn-ghost" style="width:100%;justify-content:center;display:flex;">← Back to Home</a>
+    </div>
   </div>
 </div>
 
@@ -452,13 +467,58 @@ function updateSummary() {
   document.getElementById('pTops').textContent = C.tops.length ? C.tops.map(t=>t.emoji+' '+t.label).join(', ') : 'None';
   const total = C.sizeP + C.flavourP + C.frostingP + C.topsP;
   document.getElementById('totalVal').textContent = 'PKR '+total.toLocaleString();
-  document.getElementById('orderBtn').disabled = !C.size;
+  const name = (document.getElementById('custName')||{}).value||'';
+  const phone = (document.getElementById('custPhone')||{}).value||'';
+  document.getElementById('orderBtn').disabled = !(C.size && name.trim() && phone.trim());
 }
+
+// Enable order button when name/phone filled
+document.addEventListener('DOMContentLoaded', () => {
+  ['custName','custPhone'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateSummary);
+  });
+});
+
 function placeOrder() {
+  const name  = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
+  if (!C.size)         { alert('Please choose a cake size.'); return; }
+
+  const tops  = C.tops.length ? C.tops.map(t=>t.emoji+' '+t.label).join(', ') : 'None';
+  const total = C.sizeP + C.flavourP + C.frostingP + C.topsP;
+
+  const msg = [
+    '🎂 *New Cake Order – The Bakers Inn Website*',
+    '',
+    '👤 *Customer Details*',
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    '',
+    '🍰 *Cake Specifications*',
+    `Size: ${C.size} (PKR ${C.sizeP.toLocaleString()})`,
+    `Flavour: ${C.flavour || 'Not selected'}`,
+    `Frosting: ${C.frosting || 'Not selected'}`,
+    `Toppings: ${tops}`,
+    `Message on cake: ${C.msg || 'None'}`,
+    '',
+    `💰 *Estimated Total: PKR ${total.toLocaleString()}*`,
+    '',
+    '_Please confirm availability and arrange collection/delivery._'
+  ].join('\n');
+
+  const waNumber = '923008541838'; // +92 300 8541838 – update to actual WhatsApp number
+  const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+
+  document.getElementById('waLink').href = waUrl;
+
   const modal = document.getElementById('successModal');
   modal.classList.add('open');
   const rect = document.querySelector('.modal-card').getBoundingClientRect();
-  confettiBurst(rect.left+rect.width/2, rect.top+80, 40);
+  confettiBurst(rect.left + rect.width/2, rect.top + 80, 40);
+
+  // Auto-open WhatsApp after brief delay
+  setTimeout(() => { window.open(waUrl, '_blank'); }, 600);
 }
 document.getElementById('successModal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 function resetAll() {
