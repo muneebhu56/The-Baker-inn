@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Story – The Bakers Inn</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body{padding-top:66px}
+    #story{background:var(--bg)}
+    .story-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+    .story-imgs{position:relative;height:560px}
+    .si-main{position:absolute;top:0;left:0;width:72%;height:76%;object-fit:cover;border-radius:12px;filter:brightness(0.65)}
+    .si-sm{position:absolute;bottom:0;right:0;width:54%;height:52%;object-fit:cover;border-radius:12px;border:4px solid var(--bg);filter:brightness(0.65)}
+    .si-badge{position:absolute;top:47%;left:57%;transform:translate(-50%,-50%);background:var(--caramel);width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Syne',sans-serif;box-shadow:0 8px 30px rgba(212,130,74,0.45);z-index:5}
+    .si-badge .yr{font-size:1.4rem;font-weight:800;color:white;line-height:1}
+    .si-badge .lb{font-size:0.42rem;color:rgba(255,255,255,0.7);letter-spacing:0.1em;text-transform:uppercase}
+    .story-text p{font-size:0.95rem;color:var(--text2);line-height:1.8;margin-bottom:1.2rem;margin-top:1.5rem}
+    #timeline{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .tl-wrap{max-width:700px;margin:0 auto;position:relative}
+    .tl-wrap::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border)}
+    .tl-item{display:grid;grid-template-columns:1fr 48px 1fr;gap:1.5rem;align-items:center;margin-bottom:3rem}
+    .tl-content{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.6rem;transition:border-color 0.3s}
+    .tl-content:hover{border-color:var(--border2)}
+    .tl-content h3{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.4rem}
+    .tl-content p{font-size:0.8rem;color:var(--text3);line-height:1.6}
+    .tl-dot{width:48px;height:48px;border-radius:50%;background:var(--bg3);border:2px solid var(--caramel);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;color:var(--gold);z-index:2;text-align:center;line-height:1.2;flex-shrink:0;box-shadow:0 0 0 6px var(--bg2)}
+    .tl-empty{}
+    #values{background:var(--bg)}
+    .val-header{text-align:center;margin-bottom:3.5rem}
+    .val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .val-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.8rem;transition:all 0.3s}
+    .val-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+    .val-icon{font-size:2rem;margin-bottom:1rem}
+    .val-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:0.6rem}
+    .val-card p{font-size:0.82rem;color:var(--text3);line-height:1.65}
+    @media(max-width:1024px){.story-grid{grid-template-columns:1fr;gap:3rem}.story-imgs{height:320px}.val-grid{grid-template-columns:1fr 1fr}.tl-wrap::before{left:24px}.tl-item{grid-template-columns:48px 1fr}.tl-item .tl-content:first-child{grid-column:2}.tl-empty{display:none}}
+    @media(max-width:600px){.val-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="page-banner">
+  <div class="page-banner-bg"><img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1400&auto=format&fit=crop" alt="Bakery"/></div>
+  <div class="page-banner-content">
+    <div class="page-label">Est. 1987</div>
+    <h1>Our <em>Story</em></h1>
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Our Story</span></div>
+  </div>
+</div>
+<section id="story"><div class="container"><div class="story-grid">
+  <div class="story-imgs fade-in">
+    <img class="si-main" src="https://images.unsplash.com/photo-1556217477-d325251ece38?w=700&auto=format&fit=crop" alt="Baking"/>
+    <img class="si-sm" src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&auto=format&fit=crop" alt="Cakes"/>
+    <div class="si-badge"><span class="yr">'87</span><span class="lb">Since</span></div>
+  </div>
+  <div class="fade-in">
+    <div class="tag">Our Heritage</div>
+    <h2 class="h2">A Legacy of<br><em>Sweetness</em></h2>
+    <p>The Bakers Inn has been a household name in Faisalabad, Pakistan since 1987. What began as a single humble storefront in People's Colony has grown into the city's most beloved and trusted bakery.</p>
+    <p>Evolving through generations, we have always strived to create quality products that bring people together. Our philosophy is simple: use the finest ingredients, follow time-tested recipes, and bake with genuine love and care.</p>
+    <p>We specialize in all types of cakes, pastries, biscuits, cookies, rusks, breads and snacks — each crafted by skilled artisans who pour their hearts into every creation, every single day.</p>
+    <div style="display:flex;gap:0.8rem;margin-top:2rem;flex-wrap:wrap">
+      <a href="menu.html" class="btn btn-fill">Our Menu</a>
+      <a href="contact.html" class="btn btn-ghost">Visit Us</a>
+    </div>
+  </div>
+</div></div></section>
+<section id="timeline"><div class="container">
+  <div style="text-align:center;margin-bottom:4rem" class="fade-in">
+    <div class="tag">Our Journey</div>
+    <h2 class="h2">37 Years of <em>History</em></h2>
+  </div>
+  <div class="tl-wrap">
+    <div class="tl-item fade-in"><div class="tl-content" style="text-align:right"><h3>The Beginning</h3><p>The Bakers Inn opens its first shop in People's Colony No 1, Faisalabad. A small team, big dreams.</p></div><div class="tl-dot">1987</div><div class="tl-empty"></div></div>
+    <div class="tl-item fade-in"><div class="tl-empty"></div><div class="tl-dot">1995</div><div class="tl-content"><h3>New Recipes</h3><p>Second generation joins. Our now-famous caramel cake introduced and became an instant signature.</p></div></div>
+    <div class="tl-item fade-in"><div class="tl-content" style="text-align:right"><h3>Fondant Era</h3><p>We launch bespoke fondant cake service, becoming Faisalabad's go-to for wedding & birthday cakes.</p></div><div class="tl-dot">2005</div><div class="tl-empty"></div></div>
+    <div class="tl-item fade-in"><div class="tl-empty"></div><div class="tl-dot">2015</div><div class="tl-content"><h3>Going Viral</h3><p>Customers share 500+ photos of our creations on social media, making us a digital sensation.</p></div></div>
+    <div class="tl-item fade-in"><div class="tl-content" style="text-align:right"><h3>858 Reviews</h3><p>We cross 858 Google reviews maintaining a proud 4.3 rating — three decades of relentless quality.</p></div><div class="tl-dot">2024</div><div class="tl-empty"></div></div>
+  </div>
+</div></section>
+<section id="values"><div class="container">
+  <div class="val-header fade-in">
+    <div class="tag">What Drives Us</div>
+    <h2 class="h2">Our Core <em>Values</em></h2>
+  </div>
+  <div class="val-grid">
+    <div class="val-card fade-in"><div class="val-icon">🌾</div><h3>Freshness First</h3><p>Every item baked fresh daily. We never sell day-old products — if it's not fresh, it's not from us.</p></div>
+    <div class="val-card fade-in"><div class="val-icon">🤝</div><h3>Community Love</h3><p>We are part of Faisalabad's fabric. From neighbourhood families to large events, part of every celebration.</p></div>
+    <div class="val-card fade-in"><div class="val-icon">✨</div><h3>Uncompromising Quality</h3><p>Premium ingredients, traditional techniques, the highest standards — quality is our identity, not a promise.</p></div>
+  </div>
+</div></section>
+<script src="shared.js"></script><script>injectNav('about');injectFooter();initFadeIns();</script>
+</body></html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cake Builder – The Bakers Inn</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { padding-top: 66px; }
+
+    @keyframes popIn  { from{transform:scale(0.7) rotate(-5deg);opacity:0} 70%{transform:scale(1.08)} to{transform:scale(1);opacity:1} }
+    @keyframes slideUp{ from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes shimmer{ from{background-position:-200% center} to{background-position:200% center} }
+    @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-4deg)} 75%{transform:rotate(4deg)} }
+
+    /* LAYOUT */
+    #builder-page { background:var(--bg); padding:3rem 0 6rem; }
+    .builder-wrap { display:grid; grid-template-columns:1fr 380px; gap:2.5rem; align-items:start; }
+
+    /* PROGRESS BAR */
+    .progress-header { margin-bottom:2.5rem; }
+    .progress-steps { display:flex; gap:0; margin-bottom:0.6rem; }
+    .prog-step {
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:0.4rem;
+      position:relative;
+    }
+    .prog-step:not(:last-child)::after {
+      content:''; position:absolute; top:16px; left:calc(50% + 14px); right:calc(-50% + 14px);
+      height:1px; background:var(--border2);
+    }
+    .prog-step.done:not(:last-child)::after { background:var(--caramel); }
+    .prog-dot {
+      width:32px; height:32px; border-radius:50%;
+      background:var(--bg3); border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-size:0.75rem; font-weight:700;
+      color:var(--text3); transition:all 0.3s; z-index:1;
+    }
+    .prog-step.done .prog-dot { background:var(--caramel); color:white; border-color:var(--caramel); }
+    .prog-step.active .prog-dot { background:var(--bg3); border-color:var(--gold); color:var(--gold); box-shadow:0 0 0 4px rgba(232,184,109,0.15); }
+    .prog-label { font-size:0.65rem; color:var(--text3); text-align:center; letter-spacing:0.06em; text-transform:uppercase; transition:color 0.3s; }
+    .prog-step.active .prog-label, .prog-step.done .prog-label { color:var(--text2); }
+
+    /* STEP CARDS */
+    .step-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:var(--radius); margin-bottom:1rem; overflow:hidden;
+      transition:border-color 0.3s;
+    }
+    .step-card.active { border-color:rgba(232,184,109,0.3); }
+    .step-card.done { border-color:rgba(212,130,74,0.2); }
+    .step-head {
+      display:flex; align-items:center; gap:1rem;
+      padding:1.1rem 1.4rem; cursor:pointer; transition:background 0.2s;
+    }
+    .step-head:hover { background:rgba(255,255,255,0.02); }
+    .step-num-badge {
+      width:28px; height:28px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-size:0.75rem; font-weight:700;
+      transition:all 0.3s;
+    }
+    .step-card .step-num-badge { background:var(--surface); color:var(--text3); }
+    .step-card.active .step-num-badge { background:var(--gold); color:var(--bg); }
+    .step-card.done .step-num-badge { background:var(--caramel); color:white; }
+    .step-head-text {}
+    .step-head-title { font-family:'Syne',sans-serif; font-size:0.9rem; font-weight:700; color:var(--text); }
+    .step-head-sub { font-size:0.75rem; color:var(--text3); margin-top:1px; }
+    .step-body { padding:0.2rem 1.4rem 1.4rem; animation:slideUp 0.25s both; }
+    .step-card:not(.active) .step-body { display:none; }
+
+    /* OPTIONS */
+    .opt-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:0.7rem; }
+    .opt-grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:0.7rem; }
+    .opt-grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:0.7rem; }
+    .opt-btn {
+      padding:1rem 0.5rem; background:var(--bg3); border:1.5px solid var(--border);
+      border-radius:8px; text-align:center; cursor:pointer;
+      transition:all 0.2s; display:flex; flex-direction:column; align-items:center; gap:0.3rem;
+    }
+    .opt-btn:hover { border-color:var(--border2); background:var(--surface); transform:translateY(-2px); }
+    .opt-btn.sel { border-color:var(--caramel); background:rgba(212,130,74,0.08); }
+    .opt-btn.sel .opt-icon { animation:wiggle 0.4s both; }
+    .opt-icon { font-size:1.6rem; display:block; transition:transform 0.2s; }
+    .opt-label { font-family:'Syne',sans-serif; font-size:0.72rem; font-weight:700; color:var(--text); }
+    .opt-price { font-size:0.65rem; color:var(--text3); margin-top:1px; }
+
+    .size-btn {
+      padding:1.2rem 0.8rem; background:var(--bg3); border:1.5px solid var(--border);
+      border-radius:8px; text-align:center; cursor:pointer; transition:all 0.2s;
+    }
+    .size-btn:hover { border-color:var(--border2); transform:translateY(-2px); }
+    .size-btn.sel { border-color:var(--gold); background:rgba(232,184,109,0.07); }
+    .size-icon { font-size:2rem; display:block; margin-bottom:0.4rem; }
+    .size-label { font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; color:var(--text); }
+    .size-sub { font-size:0.65rem; color:var(--text3); margin-top:2px; }
+    .size-price { font-size:0.75rem; color:var(--gold); font-weight:600; margin-top:4px; }
+
+    .topping-btn {
+      aspect-ratio:1; background:var(--bg3); border:1.5px solid var(--border);
+      border-radius:8px; cursor:pointer; transition:all 0.2s;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.3rem;
+      padding:0.5rem;
+    }
+    .topping-btn:hover { border-color:var(--border2); transform:scale(1.04); }
+    .topping-btn.sel { border-color:var(--gold); background:rgba(232,184,109,0.08); transform:scale(1.04); }
+    .top-icon { font-size:1.4rem; }
+    .top-label { font-size:0.6rem; color:var(--text3); text-align:center; }
+
+    .msg-input {
+      width:100%; padding:0.85rem 1rem;
+      background:var(--bg3); border:1.5px solid var(--border);
+      border-radius:8px; color:var(--text);
+      font-size:0.9rem; outline:none; resize:none; min-height:80px;
+      font-family:'DM Sans',sans-serif;
+      transition:border-color 0.2s;
+    }
+    .msg-input::placeholder { color:var(--text3); }
+    .msg-input:focus { border-color:var(--caramel); }
+    .char-left { font-size:0.68rem; color:var(--text3); text-align:right; margin-top:4px; }
+
+    /* PREVIEW PANEL */
+    .preview-panel {
+      position:sticky; top:80px;
+      background:var(--bg2); border:1px solid var(--border); border-radius:16px;
+      overflow:hidden;
+    }
+    .preview-top {
+      padding:1.5rem 1.5rem 0;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .preview-title { font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700; color:var(--text); }
+    .preview-reset { font-size:0.72rem; color:var(--text3); background:none; border:none; cursor:pointer; transition:color 0.2s; }
+    .preview-reset:hover { color:var(--caramel); }
+
+    .cake-display {
+      margin:1.2rem; background:var(--bg3); border:1px solid var(--border);
+      border-radius:12px; padding:2rem; text-align:center;
+      min-height:180px; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:0.3rem;
+      transition:background 0.6s;
+      position:relative; overflow:hidden;
+    }
+    .cake-display::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg, transparent 60%, rgba(232,184,109,0.05));
+      pointer-events:none;
+    }
+    .cake-main-emoji { font-size:5rem; transition:all 0.4s; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.4)); }
+    .cake-toppings-row { font-size:1.4rem; letter-spacing:3px; min-height:1.8rem; }
+    .cake-msg-preview { font-size:0.8rem; color:var(--gold); max-width:160px; word-break:break-word; min-height:1rem; }
+
+    .summary { padding:0 1.5rem 1rem; }
+    .sum-row {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0.55rem 0; border-bottom:1px solid var(--border);
+    }
+    .sum-row:last-child { border-bottom:none; }
+    .sum-key { font-size:0.72rem; color:var(--text3); }
+    .sum-val { font-size:0.8rem; color:var(--text2); font-weight:500; max-width:160px; text-align:right; }
+
+    .total-bar {
+      margin:0 1.5rem; padding:1rem 0;
+      border-top:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .total-key { font-family:'Syne',sans-serif; font-size:0.85rem; color:var(--text2); }
+    .total-val { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:var(--gold); letter-spacing:-0.02em; }
+
+    .preview-actions { padding:0 1.5rem 1.5rem; display:flex; flex-direction:column; gap:0.6rem; }
+    .btn-order-cake {
+      width:100%; padding:0.9rem; background:var(--caramel); color:white;
+      border:none; border-radius:8px; font-family:'Syne',sans-serif;
+      font-size:0.85rem; font-weight:700; cursor:pointer; letter-spacing:0.02em;
+      transition:all 0.25s;
+    }
+    .btn-order-cake:hover { background:var(--gold); color:var(--bg); transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,130,74,0.35); }
+    .btn-order-cake:disabled { opacity:0.35; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    /* SUCCESS MODAL */
+    .modal-overlay { position:fixed; inset:0; z-index:999; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal-card { background:var(--bg2); border:1px solid var(--border2); border-radius:20px; max-width:420px; width:92%; padding:3rem 2.5rem; text-align:center; transform:translateY(20px); transition:transform 0.3s; }
+    .modal-overlay.open .modal-card { transform:translateY(0); }
+    .modal-icon { font-size:4rem; display:block; margin-bottom:1.2rem; animation:wiggle 1s ease-in-out infinite; }
+    .modal-card h2 { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin-bottom:0.8rem; }
+    .modal-card p { font-size:0.9rem; color:var(--text2); line-height:1.7; margin-bottom:2rem; }
+
+    @media (max-width:1024px) {
+      .builder-wrap { grid-template-columns:1fr; }
+      .preview-panel { position:static; }
+    }
+    @media (max-width:600px) {
+      .opt-grid-3 { grid-template-columns:repeat(2,1fr); }
+      .opt-grid-4 { grid-template-columns:repeat(3,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-banner">
+  <div class="page-banner-bg"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=1400&auto=format&fit=crop" alt="Cakes"/></div>
+  <div class="page-banner-content">
+    <div class="page-label">✦ Interactive</div>
+    <h1>Cake <em>Builder</em></h1>
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Cake Builder</span></div>
+  </div>
+</div>
+
+<section id="builder-page">
+  <div class="container">
+    <!-- PROGRESS -->
+    <div class="progress-header fade-in">
+      <div class="progress-steps" id="progressSteps">
+        <div class="prog-step active"><div class="prog-dot">1</div><div class="prog-label">Size</div></div>
+        <div class="prog-step"><div class="prog-dot">2</div><div class="prog-label">Flavour</div></div>
+        <div class="prog-step"><div class="prog-dot">3</div><div class="prog-label">Frosting</div></div>
+        <div class="prog-step"><div class="prog-dot">4</div><div class="prog-label">Toppings</div></div>
+        <div class="prog-step"><div class="prog-dot">5</div><div class="prog-label">Message</div></div>
+      </div>
+    </div>
+
+    <div class="builder-wrap">
+      <!-- LEFT: STEPS -->
+      <div id="stepsContainer">
+
+        <!-- STEP 1 -->
+        <div class="step-card active" id="sc1">
+          <div class="step-head" onclick="toggleStep(1)">
+            <div class="step-num-badge">1</div>
+            <div class="step-head-text">
+              <div class="step-head-title">Choose Your Size</div>
+              <div class="step-head-sub" id="s1sub">How many will you be serving?</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="opt-grid-3">
+              <div class="size-btn" onclick="pickSize(this,'Mini 4 inch','Serves 2–4',500,'🧁')">
+                <span class="size-icon">🧁</span>
+                <div class="size-label">Mini 4"</div>
+                <div class="size-sub">Serves 2–4</div>
+                <div class="size-price">PKR 500</div>
+              </div>
+              <div class="size-btn" onclick="pickSize(this,'Regular 6 inch','Serves 6–8',1200,'🎂')">
+                <span class="size-icon">🎂</span>
+                <div class="size-label">Regular 6"</div>
+                <div class="size-sub">Serves 6–8</div>
+                <div class="size-price">PKR 1,200</div>
+              </div>
+              <div class="size-btn" onclick="pickSize(this,'Large 8 inch','Serves 10–14',2000,'🎂')">
+                <span class="size-icon" style="font-size:2.5rem">🎂</span>
+                <div class="size-label">Large 8"</div>
+                <div class="size-sub">Serves 10–14</div>
+                <div class="size-price">PKR 2,000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-card" id="sc2">
+          <div class="step-head" onclick="toggleStep(2)">
+            <div class="step-num-badge">2</div>
+            <div class="step-head-text">
+              <div class="step-head-title">Pick a Flavour</div>
+              <div class="step-head-sub" id="s2sub">What should it taste like?</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="opt-grid-3">
+              <div class="opt-btn" onclick="pickFlavour(this,'Vanilla 🍦',0)"><span class="opt-icon">🍦</span><span class="opt-label">Vanilla</span><span class="opt-price">Included</span></div>
+              <div class="opt-btn" onclick="pickFlavour(this,'Chocolate 🍫',200)"><span class="opt-icon">🍫</span><span class="opt-label">Chocolate</span><span class="opt-price">+PKR 200</span></div>
+              <div class="opt-btn" onclick="pickFlavour(this,'Caramel 🍯',200)"><span class="opt-icon">🍯</span><span class="opt-label">Caramel</span><span class="opt-price">+PKR 200</span></div>
+              <div class="opt-btn" onclick="pickFlavour(this,'Red Velvet ❤️',300)"><span class="opt-icon">❤️</span><span class="opt-label">Red Velvet</span><span class="opt-price">+PKR 300</span></div>
+              <div class="opt-btn" onclick="pickFlavour(this,'Lemon 🍋',150)"><span class="opt-icon">🍋</span><span class="opt-label">Lemon</span><span class="opt-price">+PKR 150</span></div>
+              <div class="opt-btn" onclick="pickFlavour(this,'Pistachio 🌿',350)"><span class="opt-icon">🌿</span><span class="opt-label">Pistachio</span><span class="opt-price">+PKR 350</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-card" id="sc3">
+          <div class="step-head" onclick="toggleStep(3)">
+            <div class="step-num-badge">3</div>
+            <div class="step-head-text">
+              <div class="step-head-title">Choose Frosting</div>
+              <div class="step-head-sub" id="s3sub">The outer finish</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="opt-grid-2">
+              <div class="opt-btn" onclick="pickFrosting(this,'Whipped Cream','🤍','#1a1814',0)"><span class="opt-icon">🤍</span><span class="opt-label">Whipped Cream</span><span class="opt-price">Included</span></div>
+              <div class="opt-btn" onclick="pickFrosting(this,'Choc Ganache','🍫','#0f0807',200)"><span class="opt-icon">🍫</span><span class="opt-label">Choc Ganache</span><span class="opt-price">+PKR 200</span></div>
+              <div class="opt-btn" onclick="pickFrosting(this,'Caramel Drizzle','🍯','#1a1108',250)"><span class="opt-icon">🍯</span><span class="opt-label">Caramel Drizzle</span><span class="opt-price">+PKR 250</span></div>
+              <div class="opt-btn" onclick="pickFrosting(this,'Fondant Cover','🎨','#161028',500)"><span class="opt-icon">🎨</span><span class="opt-label">Fondant Cover</span><span class="opt-price">+PKR 500</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step-card" id="sc4">
+          <div class="step-head" onclick="toggleStep(4)">
+            <div class="step-num-badge">4</div>
+            <div class="step-head-text">
+              <div class="step-head-title">Add Toppings</div>
+              <div class="step-head-sub" id="s4sub">Mix & match — pick as many as you like</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="opt-grid-4">
+              <div class="topping-btn" onclick="toggleTop(this,'🍓','Strawberry',100)"><span class="top-icon">🍓</span><span class="top-label">Strawberry</span></div>
+              <div class="topping-btn" onclick="toggleTop(this,'🫐','Blueberry',120)"><span class="top-icon">🫐</span><span class="top-label">Blueberry</span></div>
+              <div class="topping-btn" onclick="toggleTop(this,'🍒','Cherry',80)"><span class="top-icon">🍒</span><span class="top-label">Cherry</span></div>
+              <div class="topping-btn" onclick="toggleTop(this,'🍫','Choc Chips',100)"><span class="top-icon">🍫</span><span class="top-label">Choc Chips</span></div>
+              <div class="topping-btn" onclick="toggleTop(this,'🌸','Flowers',200)"><span class="top-icon">🌸</span><span class="top-label">Flowers</span></div>
+              <div class="topping-btn" onclick="toggleTop(this,'✨','Sprinkles',80)"><span class="top-icon">✨</span><span class="top-label">Sprinkles</span></div>
+              <div class="topping-btn" onclick="toggleTop(this,'🥜','Crushed Nuts',150)"><span class="top-icon">🥜</span><span class="top-label">Nuts</span></div>
+              <div class="topping-btn" onclick="toggleTop(this,'🍬','Candy',100)"><span class="top-icon">🍬</span><span class="top-label">Candy</span></div>
+            </div>
+            <p style="font-size:0.72rem;color:var(--text3);margin-top:1rem;">Each topping adds a small extra charge. Tap to select / deselect.</p>
+          </div>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="step-card" id="sc5">
+          <div class="step-head" onclick="toggleStep(5)">
+            <div class="step-num-badge">5</div>
+            <div class="step-head-text">
+              <div class="step-head-title">Cake Message</div>
+              <div class="step-head-sub" id="s5sub">Optional inscription (up to 40 characters)</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <textarea class="msg-input" id="msgInput" maxlength="40" placeholder="e.g. Happy Birthday Sara! 🎉" oninput="updateMsg(this)"></textarea>
+            <div class="char-left"><span id="cLeft">40</span> characters left</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: PREVIEW -->
+      <div class="preview-panel fade-in">
+        <div class="preview-top">
+          <span class="preview-title">Live Preview</span>
+          <button class="preview-reset" onclick="resetAll()">↺ Reset</button>
+        </div>
+
+        <div class="cake-display" id="cakeDisplay">
+          <span class="cake-main-emoji" id="cakeEmoji">🎂</span>
+          <div class="cake-toppings-row" id="cakeTops"></div>
+          <div class="cake-msg-preview" id="cakeMsg"></div>
+        </div>
+
+        <div class="summary">
+          <div class="sum-row"><span class="sum-key">Size</span><span class="sum-val" id="pSize">—</span></div>
+          <div class="sum-row"><span class="sum-key">Flavour</span><span class="sum-val" id="pFlavour">—</span></div>
+          <div class="sum-row"><span class="sum-key">Frosting</span><span class="sum-val" id="pFrosting">—</span></div>
+          <div class="sum-row"><span class="sum-key">Toppings</span><span class="sum-val" id="pTops">None</span></div>
+          <div class="sum-row"><span class="sum-key">Message</span><span class="sum-val" id="pMsg">—</span></div>
+        </div>
+
+        <div class="total-bar">
+          <span class="total-key">Estimate</span>
+          <span class="total-val" id="totalVal">PKR 0</span>
+        </div>
+
+        <div class="preview-actions">
+          <button class="btn-order-cake" id="orderBtn" onclick="placeOrder()" disabled>Place Order via Phone</button>
+          <div style="font-size:0.7rem;color:var(--text3);text-align:center;line-height:1.5;">
+            We'll call you at <a href="tel:0418541838" style="color:var(--caramel);text-decoration:none;">(041) 8541838</a> to confirm
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-card">
+    <span class="modal-icon">🎂</span>
+    <h2>Order Submitted!</h2>
+    <p>Your custom cake order has been sent. Our team will call you at <strong style="color:var(--gold)">(041) 8541838</strong> within 2 hours to confirm the details and arrange collection or delivery.</p>
+    <a href="index.html" class="btn btn-fill" style="width:100%;justify-content:center;display:flex;">← Back to Home</a>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+let C = { size:'', sizeP:0, sizeE:'🎂', flavour:'', flavourP:0, frosting:'', frostingP:0, frostingBg:'', tops:[], topsP:0, msg:'' };
+
+function activateStep(n) {
+  for (let i=1;i<=5;i++) {
+    const sc = document.getElementById('sc'+i);
+    const ps = document.querySelectorAll('.prog-step')[i-1];
+    sc.classList.remove('active','done');
+    ps.classList.remove('active','done');
+    if (i < n) { sc.classList.add('done'); ps.classList.add('done'); }
+    else if (i === n) { sc.classList.add('active'); ps.classList.add('active'); }
+  }
+}
+function toggleStep(n) {
+  const sc = document.getElementById('sc'+n);
+  if (sc.classList.contains('active')) return;
+  activateStep(n);
+}
+
+function pickSize(btn, label, serves, price, emoji) {
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  C.size=label; C.sizeP=price; C.sizeE=emoji;
+  document.getElementById('s1sub').textContent = label+' · '+serves;
+  document.getElementById('cakeEmoji').textContent = emoji;
+  updateSummary(); activateStep(2);
+}
+function pickFlavour(btn, label, price) {
+  document.querySelectorAll('#sc2 .opt-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  C.flavour=label; C.flavourP=price;
+  document.getElementById('s2sub').textContent = label;
+  updateSummary(); activateStep(3);
+}
+function pickFrosting(btn, label, icon, bg, price) {
+  document.querySelectorAll('#sc3 .opt-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  C.frosting=icon+' '+label; C.frostingP=price; C.frostingBg=bg;
+  document.getElementById('s3sub').textContent = icon+' '+label;
+  document.getElementById('cakeDisplay').style.background = bg || '';
+  updateSummary(); activateStep(4);
+}
+function toggleTop(btn, emoji, label, price) {
+  btn.classList.toggle('sel');
+  const idx = C.tops.findIndex(t=>t.emoji===emoji);
+  if(btn.classList.contains('sel')) { C.tops.push({emoji,label,price}); }
+  else { C.tops.splice(idx,1); }
+  C.topsP = C.tops.reduce((s,t)=>s+t.price,0);
+  document.getElementById('cakeTops').textContent = C.tops.map(t=>t.emoji).join(' ');
+  document.getElementById('s4sub').textContent = C.tops.length ? C.tops.map(t=>t.label).join(', ') : 'Mix & match — pick as many as you like';
+  updateSummary();
+}
+function updateMsg(inp) {
+  C.msg = inp.value;
+  document.getElementById('cLeft').textContent = 40 - inp.value.length;
+  document.getElementById('cakeMsg').textContent = inp.value;
+  document.getElementById('pMsg').textContent = inp.value || '—';
+  document.getElementById('s5sub').textContent = inp.value || 'Optional inscription (up to 40 characters)';
+}
+function updateSummary() {
+  document.getElementById('pSize').textContent = C.size || '—';
+  document.getElementById('pFlavour').textContent = C.flavour || '—';
+  document.getElementById('pFrosting').textContent = C.frosting || '—';
+  document.getElementById('pTops').textContent = C.tops.length ? C.tops.map(t=>t.emoji+' '+t.label).join(', ') : 'None';
+  const total = C.sizeP + C.flavourP + C.frostingP + C.topsP;
+  document.getElementById('totalVal').textContent = 'PKR '+total.toLocaleString();
+  document.getElementById('orderBtn').disabled = !C.size;
+}
+function placeOrder() {
+  const modal = document.getElementById('successModal');
+  modal.classList.add('open');
+  const rect = document.querySelector('.modal-card').getBoundingClientRect();
+  confettiBurst(rect.left+rect.width/2, rect.top+80, 40);
+}
+document.getElementById('successModal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+function resetAll() {
+  C = { size:'', sizeP:0, sizeE:'🎂', flavour:'', flavourP:0, frosting:'', frostingP:0, frostingBg:'', tops:[], topsP:0, msg:'' };
+  document.querySelectorAll('.size-btn,.opt-btn,.topping-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('msgInput').value = '';
+  document.getElementById('cakeEmoji').textContent = '🎂';
+  document.getElementById('cakeTops').textContent = '';
+  document.getElementById('cakeMsg').textContent = '';
+  document.getElementById('cakeDisplay').style.background = '';
+  document.getElementById('cLeft').textContent = '40';
+  ['s1sub','s2sub','s3sub','s4sub','s5sub'].forEach((id,i) => {
+    const d=['How many will you be serving?','What should it taste like?','The outer finish','Mix & match — pick as many as you like','Optional inscription (up to 40 characters)'];
+    document.getElementById(id).textContent = d[i];
+  });
+  updateSummary(); activateStep(1);
+}
+
+injectNav('builder');
+injectFooter();
+initFadeIns();
+</script>
+</body>
+</html>

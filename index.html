@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Bakers Inn – Faisalabad's Finest Since 1987</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh; padding-top: 66px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      position: relative; overflow: hidden;
+    }
+    #particle-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .hero-left {
+      padding: 6rem 3rem 5rem 4rem;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; z-index: 2;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .hero-eyebrow-badge {
+      background: rgba(212,130,74,0.12); border: 1px solid rgba(212,130,74,0.3);
+      color: var(--caramel); padding: 0.3rem 0.9rem; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .hero-left h1 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      line-height: 1.05; letter-spacing: -0.035em;
+      color: var(--text); margin-bottom: 1.5rem;
+    }
+    .hero-left h1 em {
+      font-family: 'Instrument Serif', serif; font-style: italic;
+      color: var(--gold); font-weight: 400;
+    }
+    .hero-desc {
+      font-size: 1.05rem; color: var(--text2); line-height: 1.75;
+      max-width: 440px; margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 3.5rem;
+      padding-top: 2rem; border-top: 1px solid var(--border);
+    }
+    .stat-num {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 1.9rem; color: var(--text); letter-spacing: -0.02em;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--text3); margin-top: 2px; }
+    .hero-right { position: relative; overflow: hidden; }
+    .hero-right img { width:100%; height:100%; object-fit:cover; opacity:0.6; display:block; transition:transform 12s ease; }
+    .hero-right:hover img { transform: scale(1.06); }
+    .hero-right-overlay {
+      position:absolute; inset:0;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 30%),
+                  linear-gradient(to top, var(--bg) 0%, transparent 30%);
+    }
+    .hero-year-tag {
+      position: absolute; bottom: 2.5rem; right: 2.5rem;
+      background: var(--bg2); border: 1px solid var(--border2);
+      padding: 1.2rem 1.8rem; border-radius: var(--radius);
+      text-align: center; z-index: 2;
+      backdrop-filter: blur(10px);
+    }
+    .hero-year-tag .yr { font-family:'Syne',sans-serif; font-weight:800; font-size:2rem; color:var(--gold); letter-spacing:-0.02em; }
+    .hero-year-tag .lb { font-size:0.65rem; color:var(--text3); letter-spacing:0.12em; text-transform:uppercase; margin-top:2px; }
+
+    /* ── OVEN TIMER SECTION ── */
+    #oven { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 2.5rem 0; }
+    .oven-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .oven-header-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; color:var(--text); }
+    .oven-header-sub { font-size:0.8rem; color:var(--text3); margin-top:1px; }
+    .oven-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .oven-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.4rem 1.2rem;
+      display: flex; flex-direction: column; gap: 0.8rem;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .oven-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background: linear-gradient(to right, var(--caramel), var(--gold));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 3s linear;
+    }
+    .oven-card.baking::before { transform: scaleX(1); }
+    .oven-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .oven-card-top { display:flex; align-items:center; justify-content:space-between; }
+    .oven-icon { font-size: 1.6rem; }
+    .oven-status {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.2rem 0.6rem; border-radius: 4px;
+    }
+    .oven-status.baking { background: rgba(212,130,74,0.15); color: var(--caramel); }
+    .oven-status.soon { background: rgba(232,184,109,0.12); color: var(--gold); }
+    .oven-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--text); }
+    .oven-desc { font-size:0.75rem; color:var(--text3); line-height:1.5; }
+    .oven-timer-wrap { display:flex; align-items:center; justify-content:space-between; }
+    .oven-timer-label { font-size:0.7rem; color:var(--text3); }
+    .oven-timer {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.4rem;
+      color: var(--gold); letter-spacing: 0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── FEATURED ITEMS ── */
+    #featured { background: var(--bg); }
+    .section-top { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:3rem; flex-wrap:wrap; gap:1rem; }
+    .menu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+    .menu-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:all 0.3s; }
+    .menu-card:hover { border-color:var(--border2); transform:translateY(-6px); box-shadow:0 24px 60px rgba(0,0,0,0.5); }
+    .menu-card-img { height:220px; overflow:hidden; position:relative; }
+    .menu-card-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s; filter:brightness(0.85); }
+    .menu-card:hover .menu-card-img img { transform:scale(1.07); filter:brightness(0.95); }
+    .card-chip {
+      position:absolute; top:1rem; left:1rem;
+      background:rgba(14,12,10,0.8); backdrop-filter:blur(8px);
+      border:1px solid var(--border2); color:var(--gold);
+      padding:0.22rem 0.7rem; font-size:0.68rem; font-weight:600;
+      letter-spacing:0.08em; text-transform:uppercase; border-radius:5px;
+    }
+    .menu-card-body { padding:1.4rem; }
+    .menu-card-body h3 { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:var(--text); margin-bottom:0.4rem; letter-spacing:-0.01em; }
+    .menu-card-body p { font-size:0.8rem; color:var(--text3); line-height:1.6; margin-bottom:1.1rem; }
+    .card-foot { display:flex; align-items:center; justify-content:space-between; }
+    .c-price { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:var(--gold); }
+    .c-stars { color:var(--caramel); font-size:0.75rem; letter-spacing:2px; }
+
+    /* ── BUILDER PROMO ── */
+    #builder-promo {
+      background: var(--bg2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+      padding: 5rem 0; overflow:hidden; position:relative;
+    }
+    .builder-promo-inner { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+    .builder-promo-left {}
+    .promo-steps { display:flex; flex-direction:column; gap:1rem; margin:2rem 0; }
+    .promo-step { display:flex; align-items:center; gap:1rem; }
+    .step-circle {
+      width:36px; height:36px; border-radius:50%; flex-shrink:0;
+      background:var(--surface); border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; color:var(--gold);
+    }
+    .step-text { font-size:0.88rem; color:var(--text2); }
+    .builder-promo-right { position:relative; }
+    .fake-builder-preview {
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:16px; padding:2rem; overflow:hidden;
+    }
+    .fbp-row { display:flex; gap:0.6rem; margin-bottom:0.8rem; flex-wrap:wrap; }
+    .fbp-chip {
+      background:var(--surface); border:1px solid var(--border);
+      padding:0.4rem 0.9rem; border-radius:6px; font-size:0.75rem; color:var(--text2);
+      transition:all 0.3s; cursor:default;
+    }
+    .fbp-chip.active { background:rgba(212,130,74,0.15); border-color:rgba(212,130,74,0.4); color:var(--caramel); }
+    .fbp-cake-display {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:12px; padding:2rem; text-align:center; margin-top:1rem;
+    }
+    .fbp-emoji { font-size:4rem; display:block; }
+    .fbp-label { font-family:'Syne',sans-serif; font-size:0.85rem; color:var(--text2); margin-top:0.5rem; }
+
+    /* ── ABOUT STRIP ── */
+    #about-strip { background:var(--bg); }
+    .about-strip-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+    .about-img-wrap { position:relative; height:520px; }
+    .about-img-main { position:absolute; top:0; left:0; width:73%; height:76%; object-fit:cover; border-radius:12px; filter:brightness(0.7); }
+    .about-img-sm { position:absolute; bottom:0; right:0; width:55%; height:52%; object-fit:cover; border-radius:12px; border:4px solid var(--bg); filter:brightness(0.75); }
+    .about-badge {
+      position:absolute; top:46%; left:56%; transform:translate(-50%,-50%);
+      background:var(--caramel); width:80px; height:80px; border-radius:50%; z-index:5;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; box-shadow:0 8px 30px rgba(212,130,74,0.4);
+    }
+    .about-badge .yr { font-size:1.3rem; font-weight:800; color:white; line-height:1; }
+    .about-badge .lb { font-size:0.45rem; color:rgba(255,255,255,0.7); letter-spacing:0.1em; text-transform:uppercase; }
+    .about-text p { font-size:0.95rem; color:var(--text2); line-height:1.8; margin-bottom:1.2rem; margin-top:1.5rem; }
+
+    @media (max-width:1024px) {
+      #hero { grid-template-columns:1fr; }
+      .hero-left { padding:3.5rem 2rem; }
+      .hero-right { height:360px; }
+      .oven-grid { grid-template-columns:repeat(2,1fr); }
+      .menu-grid { grid-template-columns:repeat(2,1fr); }
+      .builder-promo-inner { grid-template-columns:1fr; gap:3rem; }
+      .about-strip-grid { grid-template-columns:1fr; gap:3rem; }
+      .about-img-wrap { height:320px; }
+    }
+    @media (max-width:600px) {
+      .oven-grid { grid-template-columns:1fr 1fr; }
+      .menu-grid { grid-template-columns:1fr; }
+      .hero-stats { flex-wrap:wrap; gap:1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-badge">★ 4.3 · 858 Reviews</span>
+      <span class="live-badge"><span class="live-dot"></span>Open Now</span>
+    </div>
+    <h1>Faisalabad's<br><em>Finest</em><br>Bakery</h1>
+    <p class="hero-desc">Crafting joy through every bite since 1987. From artisan cakes to freshly baked breads — made with care in the heart of People's Colony.</p>
+    <div class="hero-actions">
+      <a href="menu.html" class="btn btn-fill">Explore Menu</a>
+      <a href="builder.html" class="btn btn-gold">✦ Build Your Cake</a>
+      <a href="about.html" class="btn btn-ghost">Our Story</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">37+</div><div class="stat-label">Years Baking</div></div>
+      <div><div class="stat-num">858</div><div class="stat-label">Google Reviews</div></div>
+      <div><div class="stat-num">516+</div><div class="stat-label">Photos Shared</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=1000&auto=format&fit=crop" alt="Fresh baked goods"/>
+    <div class="hero-right-overlay"></div>
+    <div class="hero-year-tag">
+      <div class="yr">1987</div>
+      <div class="lb">Est. Faisalabad</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-track">
+    <div class="marquee-item">Caramel Cakes <span>✦</span> Fondant Designs <span>✦</span> Glazed Donuts <span>✦</span> Artisan Bread <span>✦</span> Butter Cookies <span>✦</span> Cream Pastries <span>✦</span> Golden Rusks <span>✦</span> Savoury Snacks <span>✦</span></div>
+    <div class="marquee-item">Caramel Cakes <span>✦</span> Fondant Designs <span>✦</span> Glazed Donuts <span>✦</span> Artisan Bread <span>✦</span> Butter Cookies <span>✦</span> Cream Pastries <span>✦</span> Golden Rusks <span>✦</span> Savoury Snacks <span>✦</span></div>
+  </div>
+</div>
+
+<!-- OVEN TIMERS -->
+<section id="oven">
+  <div class="container">
+    <div class="oven-header">
+      <div class="live-badge"><span class="live-dot"></span>Live Kitchen</div>
+      <div>
+        <div class="oven-header-title">Fresh From The Oven</div>
+        <div class="oven-header-sub">Real-time countdowns to our next batches</div>
+      </div>
+    </div>
+    <div class="oven-grid">
+      <div class="oven-card baking">
+        <div class="oven-card-top">
+          <span class="oven-icon">🥐</span>
+          <span class="oven-status baking">Baking</span>
+        </div>
+        <div class="oven-name">Croissants</div>
+        <div class="oven-desc">Freshly laminated, baked to a golden crisp every 90 minutes</div>
+        <div class="oven-timer-wrap">
+          <span class="oven-timer-label">Next batch in</span>
+          <span class="oven-timer" data-bake="90">--:--</span>
+        </div>
+      </div>
+      <div class="oven-card">
+        <div class="oven-card-top">
+          <span class="oven-icon">🎂</span>
+          <span class="oven-status soon">Soon</span>
+        </div>
+        <div class="oven-name">Sponge Cakes</div>
+        <div class="oven-desc">Classic layered sponges, decorated by hand every 2 hours</div>
+        <div class="oven-timer-wrap">
+          <span class="oven-timer-label">Next batch in</span>
+          <span class="oven-timer" data-bake="120">--:--</span>
+        </div>
+      </div>
+      <div class="oven-card baking">
+        <div class="oven-card-top">
+          <span class="oven-icon">🍩</span>
+          <span class="oven-status baking">Frying</span>
+        </div>
+        <div class="oven-name">Glazed Donuts</div>
+        <div class="oven-desc">Fried and glazed fresh — never sitting more than 45 minutes</div>
+        <div class="oven-timer-wrap">
+          <span class="oven-timer-label">Next batch in</span>
+          <span class="oven-timer" data-bake="45">--:--</span>
+        </div>
+      </div>
+      <div class="oven-card">
+        <div class="oven-card-top">
+          <span class="oven-icon">🍞</span>
+          <span class="oven-status soon">Soon</span>
+        </div>
+        <div class="oven-name">Artisan Bread</div>
+        <div class="oven-desc">Slow-fermented sourdough, baked in large batches every 3 hours</div>
+        <div class="oven-timer-wrap">
+          <span class="oven-timer-label">Next batch in</span>
+          <span class="oven-timer" data-bake="180">--:--</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED -->
+<section id="featured">
+  <div class="container">
+    <div class="section-top fade-in">
+      <div>
+        <div class="tag">★ Popular Right Now</div>
+        <h2 class="h2">Menu <em>Highlights</em></h2>
+      </div>
+      <a href="menu.html" class="btn btn-ghost btn-sm">View Full Menu →</a>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-card fade-in">
+        <div class="menu-card-img"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop" alt="Caramel Cake"/><span class="card-chip">Bestseller</span></div>
+        <div class="menu-card-body"><h3>Caramel Dream Cake</h3><p>Layered caramel sponge with velvety cream and house-made caramel drizzle.</p><div class="card-foot"><span class="c-price">PKR 1,800</span><span class="c-stars">★★★★★</span></div></div>
+      </div>
+      <div class="menu-card fade-in">
+        <div class="menu-card-img"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&auto=format&fit=crop" alt="Donuts"/><span class="card-chip">Fresh Daily</span></div>
+        <div class="menu-card-body"><h3>Glazed Donuts</h3><p>Fluffy, golden-fried and glazed with vanilla or chocolate — never more than 45 minutes old.</p><div class="card-foot"><span class="c-price">PKR 120</span><span class="c-stars">★★★★☆</span></div></div>
+      </div>
+      <div class="menu-card fade-in">
+        <div class="menu-card-img"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=600&auto=format&fit=crop" alt="Fondant Cake"/><span class="card-chip">Custom Order</span></div>
+        <div class="menu-card-body"><h3>Fondant Birthday Cake</h3><p>Sculpted fondant cakes for every milestone. Tell us your vision — we'll bake it.</p><div class="card-foot"><span class="c-price">PKR 3,500+</span><span class="c-stars">★★★★★</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILDER PROMO -->
+<section id="builder-promo">
+  <div class="container">
+    <div class="builder-promo-inner">
+      <div class="builder-promo-left fade-in">
+        <div class="tag">✦ Interactive Feature</div>
+        <h2 class="h2">Design Your<br><em>Dream Cake</em></h2>
+        <div class="promo-steps">
+          <div class="promo-step"><div class="step-circle">1</div><div class="step-text">Choose your size — Mini 4" all the way to Party 12"</div></div>
+          <div class="promo-step"><div class="step-circle">2</div><div class="step-text">Pick a flavour — Vanilla, Caramel, Red Velvet and more</div></div>
+          <div class="promo-step"><div class="step-circle">3</div><div class="step-text">Select frosting, toppings and write your message</div></div>
+          <div class="promo-step"><div class="step-circle">4</div><div class="step-text">See a live preview + price estimate, then place your order</div></div>
+        </div>
+        <a href="builder.html" class="btn btn-fill">Open Cake Builder →</a>
+      </div>
+      <div class="builder-promo-right fade-in">
+        <div class="fake-builder-preview">
+          <div style="font-family:'Syne',sans-serif;font-size:0.7rem;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;">Flavour</div>
+          <div class="fbp-row">
+            <div class="fbp-chip active">🍯 Caramel</div>
+            <div class="fbp-chip">🍫 Chocolate</div>
+            <div class="fbp-chip">🍦 Vanilla</div>
+            <div class="fbp-chip">❤️ Red Velvet</div>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.7rem;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin:0.8rem 0;">Toppings</div>
+          <div class="fbp-row">
+            <div class="fbp-chip active">🍓 Strawberry</div>
+            <div class="fbp-chip active">✨ Sprinkles</div>
+            <div class="fbp-chip">🫐 Blueberry</div>
+          </div>
+          <div class="fbp-cake-display">
+            <span class="fbp-emoji">🎂</span>
+            <div class="fbp-label" style="color:var(--gold);margin-top:0.3rem">🍓 ✨</div>
+            <div class="fbp-label" style="font-size:0.72rem;margin-top:0.5rem;color:var(--text3)">Caramel · Whipped Cream · Strawberry + Sprinkles</div>
+            <div style="margin-top:1rem;font-family:'Syne',sans-serif;font-weight:700;font-size:1.3rem;color:var(--gold)">PKR 1,800</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT STRIP -->
+<section id="about-strip">
+  <div class="container">
+    <div class="about-strip-grid">
+      <div class="about-img-wrap fade-in">
+        <img class="about-img-main" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=700&auto=format&fit=crop" alt="Baker"/>
+        <img class="about-img-sm" src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&auto=format&fit=crop" alt="Cakes"/>
+        <div class="about-badge"><span class="yr">'87</span><span class="lb">Since</span></div>
+      </div>
+      <div class="fade-in">
+        <div class="tag">Est. 1987</div>
+        <h2 class="h2">A Legacy<br>of <em>Sweetness</em></h2>
+        <p>The Bakers Inn has been a household name in Faisalabad since 1987. Evolving through generations, we strive to create quality products that bring families together at every celebration.</p>
+        <p>We specialize in all types of cakes, pastries, biscuits, cookies, rusks, breads and snacks — each made with the finest ingredients and genuine love.</p>
+        <a href="about.html" class="btn btn-ghost" style="margin-top:1rem">Read Our Story →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="shared.js"></script>
+<script>
+  injectNav('home');
+  injectFooter();
+  initFadeIns();
+  initParticles('particle-canvas');
+  initOvenTimers();
+</script>
+</body>
+</html>
