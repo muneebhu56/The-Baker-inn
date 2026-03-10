@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gallery – The Bakers Inn</title>
   <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="animations.css"/>
   <style>
     body{padding-top:66px}
     #gallery-sec{background:var(--bg)}
@@ -101,4 +102,5 @@ document.getElementById('lbNext').onclick=()=>{ci=(ci+1)%fp.length;openLB(ci);};
 document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 document.addEventListener('keydown',e=>{if(!document.getElementById('lb').classList.contains('open'))return;if(e.key==='Escape')document.getElementById('lb').classList.remove('open');if(e.key==='ArrowLeft'){ci=(ci-1+fp.length)%fp.length;openLB(ci);}if(e.key==='ArrowRight'){ci=(ci+1)%fp.length;openLB(ci);}});
 injectNav('gallery');injectFooter();renderG('all');initFadeIns();
-</script></body></html>
+</script><script src="animations.js"></script>
+</body></html>

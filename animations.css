@@ -1,0 +1,375 @@
+/* ============================================================
+   animations.css — The Bakers Inn
+   ============================================================ */
+
+/* ── CUSTOM CURSOR ── */
+.ani-cursor-dot,
+.ani-cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  will-change: transform;
+}
+.ani-cursor-dot {
+  width: 6px; height: 6px;
+  background: var(--caramel);
+  box-shadow: 0 0 8px var(--caramel);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+.ani-cursor-ring {
+  width: 28px; height: 28px;
+  border: 1.5px solid rgba(212,130,74,0.5);
+  background: transparent;
+  transition: transform 0.08s linear, width 0.25s, height 0.25s, border-color 0.25s;
+}
+.ani-cursor-dot--hover {
+  width: 10px; height: 10px;
+  background: var(--gold);
+  box-shadow: 0 0 14px var(--gold);
+}
+.ani-cursor-ring--hover {
+  border-color: rgba(232,184,109,0.6);
+}
+.ani-cursor-ring--click {
+  border-color: var(--caramel);
+  width: 20px !important; height: 20px !important;
+}
+@media (pointer: coarse) {
+  .ani-cursor-dot, .ani-cursor-ring { display: none; }
+}
+
+/* ── SCROLL REVEAL BASE ── */
+.reveal-base {
+  will-change: opacity, transform;
+  transition: opacity 0.75s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.75s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.reveal-up    { opacity: 0; transform: translateY(36px); }
+.reveal-left  { opacity: 0; transform: translateX(-32px); }
+.reveal-right { opacity: 0; transform: translateX(32px); }
+.reveal-scale { opacity: 0; transform: scale(0.85); }
+.reveal-fade  { opacity: 0; }
+
+.reveal-visible.reveal-up,
+.reveal-visible.reveal-left,
+.reveal-visible.reveal-right,
+.reveal-visible.reveal-fade  { opacity: 1; transform: translate(0,0); }
+.reveal-visible.reveal-scale { opacity: 1; transform: scale(1); }
+
+/* ── BUTTON RIPPLE ── */
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  transform: scale(0);
+  animation: ripple-expand 0.65s cubic-bezier(0.23,1,0.32,1) forwards;
+  pointer-events: none;
+}
+@keyframes ripple-expand {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* ── BUTTON HOVER GLOW ── */
+.btn-fill {
+  position: relative;
+  overflow: hidden;
+}
+.btn-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.btn-fill:hover::after { opacity: 1; }
+
+.btn-ghost {
+  position: relative; overflow: hidden;
+}
+.btn-ghost::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(212,130,74,0.06) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+  pointer-events: none;
+}
+.btn-ghost:hover::before { transform: translateX(100%); }
+
+/* ── FLOATING BADGES ── */
+@keyframes float-badge {
+  from { transform: translateY(0px) rotate(-1deg); }
+  to   { transform: translateY(-8px) rotate(1deg); }
+}
+
+/* ── NAV LINK UNDERLINE ANIMATION ── */
+.nav-link-ani {
+  position: relative;
+}
+.nav-link-ani::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 0.9rem; right: 0.9rem;
+  height: 1px;
+  background: var(--caramel);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.23,1,0.32,1);
+}
+.nav-link-ani:hover::after,
+.nav-link-ani.active::after { transform: scaleX(1); }
+
+/* ── TAG PULSE-IN ── */
+.tag-ani {
+  animation: tag-in 0.6s cubic-bezier(0.23,1,0.32,1) both;
+}
+@keyframes tag-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── CARD HOVER LIFT + GLOW ── */
+.m-card,
+.r-card,
+.val-card,
+.oven-card,
+.q-card,
+.menu-card {
+  transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
+              border-color 0.3s,
+              box-shadow 0.4s;
+  transform-style: preserve-3d;
+}
+.m-card:hover,
+.menu-card:hover {
+  box-shadow: 0 28px 70px rgba(0,0,0,0.55),
+              0 0 0 1px rgba(212,130,74,0.15),
+              0 0 40px rgba(212,130,74,0.06);
+}
+.val-card:hover {
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4),
+              0 0 0 1px rgba(232,184,109,0.12);
+}
+.r-card:hover {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+
+/* ── IMAGE ZOOM OVERLAY ── */
+.m-img, .menu-card-img {
+  overflow: hidden;
+}
+.m-img img, .menu-card-img img {
+  transition: transform 0.7s cubic-bezier(0.23,1,0.32,1),
+              filter 0.5s ease;
+}
+.m-card:hover .m-img img,
+.menu-card:hover .menu-card-img img {
+  transform: scale(1.08) translateY(-3px);
+  filter: brightness(0.95) saturate(1.1);
+}
+
+/* ── OVEN CARD PROGRESS ── */
+.oven-card {
+  transition: transform 0.35s cubic-bezier(0.23,1,0.32,1),
+              border-color 0.3s,
+              box-shadow 0.35s;
+}
+.oven-card:hover {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,130,74,0.08);
+}
+
+/* ── SIZE / OPTION BUTTONS ── */
+.size-btn,
+.opt-btn,
+.topping-btn {
+  transition: transform 0.25s cubic-bezier(0.23,1,0.32,1),
+              border-color 0.2s,
+              background 0.2s,
+              box-shadow 0.25s;
+}
+.size-btn:hover,
+.opt-btn:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.size-btn.sel,
+.opt-btn.sel {
+  box-shadow: 0 0 0 2px rgba(212,130,74,0.4),
+              0 8px 24px rgba(212,130,74,0.15);
+}
+.topping-btn:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+.topping-btn.sel {
+  box-shadow: 0 0 0 2px rgba(232,184,109,0.4);
+  animation: topping-pop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes topping-pop {
+  0%   { transform: scale(0.88); }
+  60%  { transform: scale(1.12); }
+  100% { transform: scale(1.04); }
+}
+
+/* ── LIVE DOT ENHANCED ── */
+.live-dot {
+  position: relative;
+}
+.live-dot::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: var(--green);
+  opacity: 0.3;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%,100% { transform: scale(1); opacity: 0.3; }
+  50%     { transform: scale(2.2); opacity: 0; }
+}
+
+/* ── MASONRY ITEM HOVER ── */
+.m-item {
+  transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
+              box-shadow 0.4s;
+}
+.m-item:hover {
+  transform: scale(1.02) translateY(-3px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  z-index: 2;
+}
+
+/* ── MARQUEE PAUSE ON HOVER ── */
+.marquee-bar:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ── TIMELINE DOT PULSE ── */
+.tl-dot {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.tl-item:hover .tl-dot {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 8px rgba(212,130,74,0.12), 0 0 0 6px var(--bg2);
+}
+
+/* ── FOOTER LINKS ── */
+.footer-col a {
+  position: relative;
+  padding-left: 0;
+  transition: color 0.25s, padding-left 0.25s;
+}
+.footer-col a:hover {
+  padding-left: 6px;
+}
+
+/* ── HERO STATS UNDERLINE ── */
+.hero-stats > div {
+  position: relative;
+  padding-bottom: 0.5rem;
+  transition: transform 0.3s;
+}
+.hero-stats > div::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: linear-gradient(to right, var(--caramel), var(--gold));
+  transition: width 0.4s cubic-bezier(0.23,1,0.32,1);
+}
+.hero-stats > div:hover { transform: translateY(-3px); }
+.hero-stats > div:hover::after { width: 100%; }
+
+/* ── PAGE BANNER PARALLAX FADE ── */
+.page-banner-bg img {
+  transition: transform 0.1s linear;
+  transform-origin: center top;
+}
+
+/* ── CAKE EMOJI BOUNCE ── */
+.cake-main-emoji {
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ── PROGRESS DOT GLOW ── */
+.prog-step.active .prog-dot {
+  animation: prog-glow 1.5s ease-in-out infinite;
+}
+@keyframes prog-glow {
+  0%,100% { box-shadow: 0 0 0 4px rgba(232,184,109,0.15); }
+  50%     { box-shadow: 0 0 0 8px rgba(232,184,109,0.25), 0 0 16px rgba(232,184,109,0.15); }
+}
+
+/* ── MAP BOX ── */
+.map-embed-wrap {
+  transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
+              box-shadow 0.4s;
+}
+.map-embed-wrap:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+
+/* ── SCORE CARD BIG NUM ── */
+.big-num {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--caramel) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── STEP CARD TRANSITION ── */
+.step-card {
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.step-card.active {
+  box-shadow: 0 8px 32px rgba(232,184,109,0.08);
+}
+
+/* ── SHIMMER ON HERO RIGHT OVERLAY ── */
+.hero-right::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 40%; height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255,255,255,0.04) 50%,
+    transparent 60%
+  );
+  z-index: 3;
+  animation: hero-shimmer 5s ease-in-out infinite;
+}
+@keyframes hero-shimmer {
+  0%   { transform: translateX(-60%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateX(260%); opacity: 0; }
+}
+
+/* ── BUILDER PREVIEW GLOW ── */
+.fake-builder-preview {
+  transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
+              box-shadow 0.4s;
+}
+.fake-builder-preview:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4),
+              0 0 0 1px rgba(232,184,109,0.1),
+              0 0 40px rgba(232,184,109,0.04);
+}
+
+/* ── REDUCE MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .ani-cursor-dot, .ani-cursor-ring { display: none; }
+}
